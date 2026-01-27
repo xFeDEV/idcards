@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carnet Bienestar Policía</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .carnet {
+            width: 85.6mm; /* Tamaño estándar de tarjeta de crédito/ID */
+            height: 54mm;
+            background-color: #ffffff;
+            border-radius: 4mm;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header con Logos y Título */
+        .header {
+            padding: 5px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #002855;
+        }
+
+        .header img {
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .header-text {
+            text-align: center;
+            flex-grow: 1;
+            padding: 0 5px;
+        }
+
+        .header-text h1 {
+            margin: 0;
+            font-size: 10px;
+            color: #002855;
+            text-transform: uppercase;
+            font-weight: 900;
+            line-height: 1.2;
+        }
+
+        .header-text h2 {
+            margin: 0;
+            font-size: 8px;
+            color: #333;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        /* Cuerpo del Carnet */
+        .body {
+            display: flex;
+            padding: 10px;
+            flex-grow: 1;
+            align-items: center;
+        }
+
+        .photo-area {
+            width: 80px;
+            height: 90px;
+            background-color: #ddd;
+            border: 1px solid #ccc;
+            margin-right: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 10px;
+            color: #666;
+        }
+
+        .info-area {
+            flex-grow: 1;
+            font-size: 10px;
+            color: #002855;
+        }
+
+        .info-row {
+            margin-bottom: 4px;
+        }
+
+        .label {
+            font-weight: bold;
+            display: block;
+            font-size: 8px;
+            color: #555;
+            text-transform: uppercase;
+        }
+
+        .value {
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        /* Patrón de cuadros (Checkered Strip) recreado con CSS */
+        .pattern-strip {
+            height: 15px;
+            width: 100%;
+            /* Recreación del patrón verde y azul */
+            background-color: #002244; /* Azul oscuro de fondo */
+            background-image: 
+                conic-gradient(
+                    #aadd00 90deg,     /* Verde lima */
+                    #002244 90deg 180deg, /* Azul oscuro */
+                    #aadd00 180deg 270deg, /* Verde lima */
+                    #002244 270deg        /* Azul oscuro */
+                );
+            background-size: 15px 15px; /* Tamaño de los cuadros */
+            border-top: 1px solid #002244;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="carnet">
+        
+        <!-- Cabecera -->
+        <div class="header">
+            <!-- Escudo Policía -->
+            <img src="escudo.png" alt="Escudo Policía Nacional">
+            
+            <div class="header-text">
+                <h1>República de Colombia</h1>
+                <h2>Policía Nacional</h2>
+                <h2>Dirección de Bienestar Social</h2>
+            </div>
+            
+            <!-- Logo Bienestar -->
+            <img src="logobienestar.png" alt="Logo Bienestar">
+        </div>
+
+        <!-- Información -->
+        <div class="body">
+            <!-- Espacio para foto -->
+            <div class="photo-area">
+                FOTO
+            </div>
+
+            <!-- Datos -->
+            <div class="info-area">
+                <div class="info-row">
+                    <span class="label">Nombres y Apellidos</span>
+                    <span class="value">JUAN PEREZ</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Grado</span>
+                    <span class="value">PATRULLERO</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Cédula</span>
+                    <span class="value">1.234.567.890</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Franja con Patrón CSS -->
+        <div class="pattern-strip"></div>
+
+    </div>
+
+</body>
+</html>

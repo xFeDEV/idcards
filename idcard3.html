@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carnet Estudiantil</title>
+    <!-- Librerías para generar PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            font-family: 'Roboto Condensed', sans-serif;
+        }
+
+        /* Contenedor Principal del Carnet */
+        .carnet {
+            width: 320px;
+            height: 500px;
+            background-color: white;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border: 1px solid #ddd;
+        }
+
+        /* Fondo con marca de agua (Escudo Policía repetido) */
+        .watermark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('escudo.png'); /* Asegúrate de que este nombre coincida */
+            background-size: 80px;
+            background-repeat: repeat;
+            opacity: 0.1; /* Muy tenue para parecer marca de agua */
+            z-index: 0;
+        }
+
+        /* Elemento decorativo Azul (Curva Izquierda) */
+        .shape-blue {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 70px;
+            height: 300px;
+            background-color: #002244; /* Azul oscuro institucional */
+            border-bottom-right-radius: 100% 60%;
+            z-index: 1;
+            clip-path: ellipse(90% 100% at 0% 0%);
+        }
+
+        /* Elemento decorativo Verde (Curva Inferior Izquierda) */
+        .shape-green {
+            position: absolute;
+            bottom: 30px; /* Justo encima del ajedrez */
+            left: 0;
+            width: 100px;
+            height: 100px;
+            background-color: #aadd00; /* Verde brillante */
+            z-index: 1;
+            clip-path: circle(80% at 0% 100%);
+        }
+
+        /* Contenido Superior (Header) */
+        .header {
+            position: relative;
+            z-index: 2;
+            /* display: flex; removido para permitir centrado absoluto */
+            padding: 15px 10px 5px 10px;
+            text-align: center;
+        }
+
+        .logo-top {
+            position: absolute;
+            left: 15px;
+            top: 5px;
+            
+            width: 60px;
+            height: auto;
+            z-index: 10;
+        }
+
+        .header-text {
+            /* flex: 1; removido */
+            text-align: center;
+            color: #1a1a1a;
+            font-size: 11px;
+            line-height: 1.2;
+            padding-top: 5px;
+        }
+
+        .header-text h1 {
+            font-size: 12px;
+            margin: 0;
+            font-weight: 400;
+        }
+        
+        .header-text h2 {
+            font-size: 13px;
+            margin: 2px 0;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .header-text h3 {
+            font-size: 11px;
+            margin: 0;
+            font-weight: 400;
+        }
+
+        /* Foto del Estudiante */
+        .photo-container {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .photo-frame {
+            width: 140px;
+            height: 190px;
+            border: 1px solid #333;
+            background-color: #eee;
+            object-fit: cover;
+        }
+
+        /* Información del Estudiante */
+        .info-container {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 0 15px;
+        }
+
+        .student-name {
+            font-size: 18px;
+            font-weight: 900; /* Extra bold */
+            color: #222;
+            margin: 5px 0;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+        }
+
+        .student-id {
+            font-size: 18px;
+            color: #333;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        /* Datos inferiores (RH y Grado) */
+        .bottom-data {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 20px;
+            margin-top: 5px;
+            font-weight: 900;
+            font-size: 16px;
+        }
+
+        .rh {
+            color: #000;
+        }
+
+        .grade {
+            color: #333;
+            margin-right: 10px;
+        }
+
+        /* Footer (Ajedrez) */
+        .footer-checkers {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 35px;
+            display: flex;
+            flex-wrap: wrap;
+            z-index: 3;
+        }
+
+        .checker {
+            width: 5%; /* 20 cuadros de ancho aprox */
+            height: 50%;
+        }
+
+        /* Generar patrón de ajedrez */
+        .c-green { background-color: #aadd00; }
+        .c-dark { background-color: #002244; }
+
+        /* Botón de descarga */
+        .download-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #002244;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-family: inherit;
+        }
+
+        .download-btn:hover {
+            background-color: #aadd00;
+            color: #002244;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="carnet" id="carnet">
+            <div class="watermark"></div>
+
+        <div class="shape-blue"></div>
+        <div class="shape-green"></div>
+
+        <div class="header">
+            <img src="logobienestar.png" alt="Logo" class="logo-top">
+            
+            <div class="header-text">
+                <h1>DIRECCION DE BIENESTAR SOCIAL</h1>
+                <h2>COLEGIO NUESTRA SEÑORA DE FATIMA</h2>
+                <h3>PEREIRA - RISARALDA</h3>
+            </div>
+        </div>
+
+        <div class="photo-container">
+            <img src="foto_estudiante.jpg" alt="Foto Estudiante" class="photo-frame">
+        </div>
+
+        <div class="info-container">
+            <div class="student-name">SILVANA BASTIDAS PALLARES</div>
+            <div class="student-id">ID: 1091669848</div>
+        </div>
+
+        <div class="bottom-data">
+            <div class="rh">RH: A+</div>
+            <div class="grade">9 B</div>
+        </div>
+
+        <div class="footer-checkers" id="footerCheckers">
+            </div>
+    </div>
+    
+    <button class="download-btn" onclick="downloadPDF()">Descargar PDF</button>
+    </div>
+
+    <script>
+        // Script simple para generar el patrón de ajedrez verde/oscuro
+        const footer = document.getElementById('footerCheckers');
+        const rows = 2;
+        const cols = 20; 
+
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                const div = document.createElement('div');
+                div.className = 'checker';
+                // Alternar colores
+                if ((r + c) % 2 === 0) {
+                    div.classList.add('c-green');
+                } else {
+                    div.classList.add('c-dark');
+                }
+                footer.appendChild(div);
+            }
+        }
+
+        // Función para descargar como PDF
+        async function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const element = document.getElementById('carnet');
+            
+            // Usamos html2canvas para capturar el diseño exacto
+            const canvas = await html2canvas(element, {
+                scale: 3, // Mayor escala para mejor calidad de texto
+                useCORS: true, // Permitir carga de imágenes externas si es necesario
+                backgroundColor: "#ffffff"
+            });
+
+            const imgData = canvas.toDataURL('image/png');
+            
+            // Tamaño estándar de carnet ID-1 (CR80): 53.98mm x 85.60mm
+            // Creamos PDF con esas dimensiones
+            const doc = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: [54, 86]
+            });
+
+            // Ajustamos la imagen al tamaño del PDF
+            doc.addImage(imgData, 'PNG', 0, 0, 54, 86);
+            doc.save('Carnet_Estudiantil.pdf');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ID Card SENA - Estevan Duque</title>
+    <style>
+        :root {
+            --sena-green: #39a900;
+            --sena-dark-green: #00322d;
+            --text-gray: #4a4a4a;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+        }
+
+        .card {
+            width: 350px;
+            height: 550px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+        }
+
+        /* Header: Logo y Foto */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .logo-sena {
+            width: 80px;
+            color: var(--sena-green);
+        }
+
+        .photo-container {
+            width: 130px;
+            height: 160px;
+            background-color: #e0e0e0; /* Placeholder */
+            border-radius: 5px;
+            overflow: hidden;
+            border: 1px solid #ccc;
+        }
+
+        .photo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Etiquetas */
+        .role {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #333;
+            margin-top: 5px;
+            letter-spacing: 1px;
+        }
+
+        .divider {
+            height: 3px;
+            background-color: var(--sena-green);
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        /* Información Principal */
+        .info-section {
+            flex-grow: 1;
+        }
+
+        .name {
+            color: var(--sena-green);
+            font-size: 1.4rem;
+            font-weight: bold;
+            line-height: 1.2;
+            margin: 10px 0;
+        }
+
+        .id-number, .rh {
+            font-size: 1.1rem;
+            color: var(--text-gray);
+            margin: 5px 0;
+        }
+
+        /* Código de Barras Placeholder */
+        .barcode {
+            width: 100%;
+            height: 50px;
+            background: repeating-linear-gradient(
+                90deg,
+                #333,
+                #333 2px,
+                #fff 2px,
+                #fff 4px
+            );
+            margin: 15px 0;
+        }
+
+        /* Footer: Datos Regionales */
+        .footer {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+        }
+
+        .footer-line {
+            height: 2px;
+            background-color: var(--sena-green);
+            width: 40px;
+            margin-bottom: 5px;
+        }
+
+        .regional {
+            font-weight: bold;
+            display: block;
+        }
+
+        .center-name {
+            color: var(--sena-green);
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .program {
+            color: var(--sena-green);
+            font-size: 0.8rem;
+        }
+
+        .ficha {
+            margin-top: 3px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="header">
+            <div class="logo-sena">
+                <svg viewBox="0 0 100 100" fill="currentColor">
+                    <circle cx="50" cy="15" r="8"/>
+                    <path d="M20 30 h60 v10 h-60 z M35 45 l-15 40 h10 l10 -25 l10 25 h10 l-15 -40 z M65 45 l15 40 h-10 l-10 -25 l-10 25 h-10 l15 -40 z"/>
+                </svg>
+            </div>
+            <div class="photo-container">
+                <img src="https://via.placeholder.com/130x160" alt="Foto Aprendiz">
+            </div>
+        </div>
+
+        <div class="role">APRENDIZ</div>
+        <div class="divider"></div>
+
+        <div class="info-section">
+            <div class="name">Estevan Federico<br>Duque López</div>
+            <div class="id-number">C.C. 1.004.754.391</div>
+            <div class="rh">Rh: A+</div>
+        </div>
+
+        <div class="barcode"></div>
+
+        <div class="footer">
+            <div class="footer-line"></div>
+            <span class="regional">Regional Risaralda</span>
+            <div class="center-name">Centro Atención Sector Agropecuario</div>
+            <div class="program">
+                Teg. Análisis y desarrollo de software.<br>
+                <div class="ficha">Ficha 2847248</div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
