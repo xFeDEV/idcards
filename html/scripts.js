@@ -103,10 +103,14 @@ async function generateIdCard(data) {
   const escudoUri = await getRectImageUri('escudo.png');
   const bienestarUri = await getRectImageUri('logobienestar.png');
 
-  for (const [i, employee] of data.entries()) {
+  for (const [i, estudiante] of data.entries()) {
     if (i > 0) {
       doc.addPage();
     }
+
+    // =============================================
+    // FRENTE DEL CARNET
+    // =============================================
 
     // --- Header ---
     // Logos
@@ -147,7 +151,7 @@ async function generateIdCard(data) {
     doc.setFillColor('#fff');
     // White border circle
     doc.circle(1.063, 1.447, 0.473, 'F');
-    const profileUri = await getCircularImageUri(employee.image, 400, 400);
+    const profileUri = await getCircularImageUri(estudiante.image, 400, 400);
     // Profile image
     doc.addImage(profileUri, 0.633, 1.015, 0.86, 0.86);
 
@@ -155,28 +159,28 @@ async function generateIdCard(data) {
     doc.setFont('Poppins', 'bold');
     doc.setFontSize(9);
     doc.setTextColor('#fff');
-    // Name
-    doc.text(employee.name.toUpperCase(), 1.0625, 2.15, null, null, 'center');
+    // Name (Nombres y Apellidos)
+    const nombreCompleto = `${estudiante.nombres} ${estudiante.apellidos}`;
+    doc.text(nombreCompleto.toUpperCase(), 1.0625, 2.15, null, null, 'center');
     
-    // Designation
+    // Rol - ESTUDIANTE
     doc.setFont('Poppins', 'medium');
     doc.setFontSize(6);
-    doc.text(employee.designation.toUpperCase(), 1.0625, 2.25, null, null, 'center');
+    doc.text('ESTUDIANTE', 1.0625, 2.25, null, null, 'center');
 
-    // Details Grid
+    // Details Grid - Solo: ID, RH, Grupo
     const startInfoY = 2.45;
-    const lineSpace = 0.14;
+    const lineSpace = 0.18;
     
     const items = [
-        { l: 'ID', v: employee.id },
-        { l: 'Teléfono', v: employee.phone },
-        { l: 'Dirección', v: employee.address },
-        { l: 'Valido', v: '2026-12-31' }
+        { l: 'ID', v: estudiante.identificacion },
+        { l: 'RH', v: estudiante.rh },
+        { l: 'Grado', v: `${estudiante.grado}° - ${estudiante.grupo}` }
     ];
 
     items.forEach((item, k) => {
         const y = startInfoY + (k * lineSpace);
-        doc.setFontSize(5.5);
+        doc.setFontSize(6);
         doc.setTextColor(200, 200, 200); // Label color
         doc.text(item.l, 0.4, y);
         doc.text(':', 0.85, y);
@@ -194,7 +198,7 @@ async function generateIdCard(data) {
     doc.setFillColor('#fff');
     doc.rect(qrX - 0.02, qrY - 0.02, qrSize + 0.04, qrSize + 0.04, 'F');
     
-    const qrCodeUri = getQrCodeUri(employee.id);
+    const qrCodeUri = getQrCodeUri(estudiante.identificacion);
     doc.addImage(qrCodeUri, qrX, qrY, qrSize, qrSize);
 
     // --- Pattern Strip (Footer) ---
@@ -231,10 +235,142 @@ async function generateIdCard(data) {
         rowIdx++;
     }
     
-    // Draw line above pattern?
+    // Draw line above pattern
     doc.setDrawColor(0, 34, 68);
     doc.setLineWidth(0.01);
     doc.line(0, bottomY, 2.125, bottomY);
+
+    // =============================================
+    // REVERSO DEL CARNET
+    // =============================================
+    doc.addPage();
+
+    // --- Header del Reverso ---
+    if(escudoUri) doc.addImage(escudoUri, 'PNG', margin, 0.1, logoSize, logoSize); 
+    if(bienestarUri) doc.addImage(bienestarUri, 'PNG', pageWidth - margin - logoSize, 0.1, logoSize, logoSize);
+
+    doc.setFont('Poppins', 'bold');
+    doc.setTextColor(PRIMARY_COLOR);
+    
+    doc.setFontSize(7);
+    doc.text('REPÚBLICA DE COLOMBIA', 1.0625, 0.20, null, null, 'center');
+    
+    doc.setFontSize(6);
+    doc.text('POLICÍA NACIONAL', 1.0625, 0.30, null, null, 'center');
+    
+    doc.setFontSize(4.5); 
+    doc.text('DIRECCIÓN DE BIENESTAR SOCIAL', 1.0625, 0.40, null, null, 'center');
+
+    // --- Nombre del Colegio ---
+    doc.setFontSize(5);
+    doc.setFont('Poppins', 'bold');
+    doc.setTextColor(PRIMARY_COLOR);
+    doc.text(estudiante.colegio, 1.0625, 0.55, null, null, 'center');
+
+    // --- Sección ACUDIENTE ---
+    doc.setFillColor(PRIMARY_COLOR);
+    doc.rect(0.15, 0.70, 1.825, 0.18, 'F');
+    
+    doc.setFont('Poppins', 'bold');
+    doc.setFontSize(7);
+    doc.setTextColor('#fff');
+    doc.text('DATOS DEL ACUDIENTE', 1.0625, 0.82, null, null, 'center');
+
+    // Datos del Acudiente
+    const acudienteStartY = 1.0;
+    const acudienteLineSpace = 0.16;
+    
+    const acudienteItems = [
+        { l: 'Nombre', v: estudiante.acudiente.nombre },
+        { l: 'Identificación', v: estudiante.acudiente.identificacion },
+        { l: 'Celular 1', v: estudiante.acudiente.celular_1 },
+        { l: 'Celular 2', v: estudiante.acudiente.celular_2 || 'N/A' },
+        { l: 'Email', v: estudiante.acudiente.email || 'N/A' }
+    ];
+
+    doc.setFont('Poppins', 'medium');
+    acudienteItems.forEach((item, k) => {
+        const y = acudienteStartY + (k * acudienteLineSpace);
+        doc.setFontSize(5.5);
+        doc.setTextColor(100, 100, 100);
+        doc.text(item.l + ':', 0.2, y);
+        
+        doc.setTextColor(PRIMARY_COLOR);
+        doc.setFont('Poppins', 'bold');
+        doc.text(item.v, 0.75, y);
+        doc.setFont('Poppins', 'medium');
+    });
+
+    // --- Sección INFORMACIÓN DEL SEGURO ---
+    doc.setFillColor(PRIMARY_COLOR);
+    doc.rect(0.15, 1.85, 1.825, 0.18, 'F');
+    
+    doc.setFont('Poppins', 'bold');
+    doc.setFontSize(7);
+    doc.setTextColor('#fff');
+    doc.text('INFORMACIÓN DEL SEGURO', 1.0625, 1.97, null, null, 'center');
+
+    // Datos del Seguro
+    const seguroStartY = 2.15;
+    const seguroLineSpace = 0.18;
+    
+    const seguroItems = [
+        { l: 'Póliza Nº', v: estudiante.poliza },
+        { l: 'Línea de Atención', v: estudiante.linea_atencion },
+        { l: 'Fecha Vencimiento', v: estudiante.fecha_vencimiento }
+    ];
+
+    doc.setFont('Poppins', 'medium');
+    seguroItems.forEach((item, k) => {
+        const y = seguroStartY + (k * seguroLineSpace);
+        doc.setFontSize(6);
+        doc.setTextColor(100, 100, 100);
+        doc.text(item.l + ':', 0.2, y);
+        
+        doc.setTextColor(PRIMARY_COLOR);
+        doc.setFont('Poppins', 'bold');
+        doc.text(item.v, 1.05, y);
+        doc.setFont('Poppins', 'medium');
+    });
+
+    // --- Texto Legal / Instrucciones ---
+    doc.setFillColor(240, 240, 240);
+    doc.rect(0.15, 2.72, 1.825, 0.35, 'F');
+    
+    doc.setFont('Poppins', 'medium');
+    doc.setFontSize(4);
+    doc.setTextColor(80, 80, 80);
+    const textoLegal = 'Este carnet es personal e intransferible. En caso de pérdida favor reportar a la institución educativa. El uso indebido será sancionado conforme a las normas vigentes.';
+    doc.text(textoLegal, 1.0625, 2.82, { maxWidth: 1.75, align: 'center' });
+
+    // --- Pattern Strip (Footer) del Reverso ---
+    const stripHeightBack = 0.25;
+    const bottomYBack = 3.375 - stripHeightBack;
+
+    let rowIdxBack = 0;
+    for (let y = bottomYBack; y < 3.375; y += squareSize) {
+        let colIdx = 0;
+        for (let x = 0; x < 2.125; x += squareSize) {
+            if ((rowIdxBack + colIdx) % 2 === 0) {
+                 doc.setFillColor(...colGreen);
+            } else {
+                 doc.setFillColor(...colBlue);
+            }
+            
+            let w = (x + squareSize > 2.125) ? 2.125 - x : squareSize;
+            let h = (y + squareSize > 3.375) ? 3.375 - y : squareSize;
+            
+            if (w > 0.01 && h > 0.01) {
+                doc.rect(x, y, w, h, 'F');
+            }
+            colIdx++;
+        }
+        rowIdxBack++;
+    }
+    
+    doc.setDrawColor(0, 34, 68);
+    doc.setLineWidth(0.01);
+    doc.line(0, bottomYBack, 2.125, bottomYBack);
   }
 
   document
