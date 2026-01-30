@@ -149,11 +149,11 @@ async function generateIdCard(data) {
 
     // --- Profile Image ---
     doc.setFillColor('#fff');
-    // White border circle
-    doc.circle(1.063, 1.447, 0.473, 'F');
+    // White border circle (más grande)
+    doc.circle(1.063, 1.40, 0.53, 'F');
     const profileUri = await getCircularImageUri(estudiante.image, 400, 400);
-    // Profile image
-    doc.addImage(profileUri, 0.633, 1.015, 0.86, 0.86);
+    // Profile image (más grande)
+    doc.addImage(profileUri, 0.563, 0.90, 1.0, 1.0);
 
     // --- Text Info ---
     doc.setFont('Poppins', 'bold');
@@ -161,21 +161,21 @@ async function generateIdCard(data) {
     doc.setTextColor('#fff');
     // Name (Nombres y Apellidos)
     const nombreCompleto = `${estudiante.nombres} ${estudiante.apellidos}`;
-    doc.text(nombreCompleto.toUpperCase(), 1.0625, 2.15, null, null, 'center');
+    doc.text(nombreCompleto.toUpperCase(), 1.0625, 2.20, null, null, 'center');
     
     // Rol - ESTUDIANTE
     doc.setFont('Poppins', 'medium');
     doc.setFontSize(6);
-    doc.text('ESTUDIANTE', 1.0625, 2.25, null, null, 'center');
+    doc.text('ESTUDIANTE', 1.0625, 2.32, null, null, 'center');
 
     // Details Grid - Solo: ID, RH, Grupo
-    const startInfoY = 2.45;
+    const startInfoY = 2.52;
     const lineSpace = 0.18;
     
     const items = [
         { l: 'ID', v: estudiante.identificacion },
         { l: 'RH', v: estudiante.rh },
-        { l: 'Grado', v: `${estudiante.grado}° - ${estudiante.grupo}` }
+        { l: 'Grado', v: `${estudiante.grado} ${estudiante.grupo}` }
     ];
 
     items.forEach((item, k) => {
