@@ -180,7 +180,7 @@ async function generateIdCard(data) {
 
     items.forEach((item, k) => {
         const y = startInfoY + (k * lineSpace);
-        doc.setFontSize(6);
+        doc.setFontSize(7);
         doc.setTextColor(200, 200, 200); // Label color
         doc.text(item.l, 0.4, y);
         doc.text(':', 0.85, y);
